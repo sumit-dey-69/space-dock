@@ -48,3 +48,5 @@ desktop.ini
 .nuxt/
 .vercel/
 
+
+/src/generated/prisma
