@@ -7,7 +7,7 @@ export function SiteHeader() {
   const { data: session, status } = useSession();
 
   return (
-    <header className="flex items-center justify-between border-b px-6 py-4">
+    <header className="flex h-16 shrink-0 items-center justify-between border-b px-6">
       <span className="text-lg font-semibold tracking-tight">SpaceDock</span>
 
       {status === "loading" ? null : session ? (

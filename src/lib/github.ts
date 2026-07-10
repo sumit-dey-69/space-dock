@@ -141,3 +141,56 @@ export async function deleteCodespace(
     method: "DELETE",
   });
 }
+
+/** Shape of a repository as returned by the GitHub REST API. Trimmed to
+ * the fields SpaceDock actually uses. */
+export interface Repo {
+  id: number;
+  name: string;
+  full_name: string;
+  owner: {
+    login: string;
+    avatar_url: string;
+  };
+  private: boolean;
+  fork: boolean;
+  description: string | null;
+  html_url: string;
+  default_branch: string;
+  updated_at: string;
+  pushed_at: string | null;
+  stargazers_count: number;
+  language: string | null;
+  /** Whether the authenticated user has admin rights on this repo — only
+   * repos where this is true can actually be deleted by them. */
+  permissions?: {
+    admin: boolean;
+    push: boolean;
+    pull: boolean;
+  };
+}
+
+type ListReposResponse = Repo[];
+
+/** Lists repositories the authenticated user owns, collaborates on, or
+ * belongs to via an org — i.e. everything they'd see on github.com's own
+ * repo list, both private and public. */
+export async function listRepos(accessToken: string): Promise<Repo[]> {
+  return githubFetch<ListReposResponse>(
+    accessToken,
+    "/user/repos?per_page=100&sort=updated&affiliation=owner,collaborator,organization_member"
+  );
+}
+
+/** Permanently deletes a repository. Irreversible — requires the
+ * `delete_repo` OAuth scope in addition to `repo`, and the authenticated
+ * user must have admin rights on it. GitHub returns 204 on success. */
+export async function deleteRepo(
+  accessToken: string,
+  owner: string,
+  repo: string
+): Promise<void> {
+  return githubFetch<void>(accessToken, `/repos/${owner}/${repo}`, {
+    method: "DELETE",
+  });
+}

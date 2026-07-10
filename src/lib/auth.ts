@@ -11,6 +11,14 @@ import GitHubProvider from "next-auth/providers/github";
  * touching auth — they'd just be keyed by the GitHub user id from the token.
  */
 export const authOptions: NextAuthOptions = {
+  // In environments where the app is accessed through a proxy with a
+  // dynamic hostname (GitHub Codespaces forwarded ports, Vercel preview
+  // deployments, etc.), NextAuth needs to trust the incoming
+  // `x-forwarded-host` / `x-forwarded-proto` headers to compute the correct
+  // callback origin instead of relying on a hardcoded NEXTAUTH_URL.
+  // Enabled by setting AUTH_TRUST_HOST=true in the environment — see
+  // node_modules/next-auth/src/utils/detect-origin.ts for the underlying
+  // logic this activates.
   providers: [
     GitHubProvider({
       clientId: process.env.GITHUB_CLIENT_ID!,
@@ -18,9 +26,13 @@ export const authOptions: NextAuthOptions = {
       authorization: {
         params: {
           // codespace: create/manage Codespaces
-          // repo: required because Codespaces are created against a repo
+          // repo: required because Codespaces are created against a repo,
+          //   and to list private repos
+          // delete_repo: required to delete a repository from the
+          //   dashboard — a deliberately separate, higher-privilege scope
+          //   GitHub requires beyond plain `repo` write access
           // read:user: basic profile info
-          scope: "read:user codespace repo",
+          scope: "read:user codespace repo delete_repo",
         },
       },
     }),
