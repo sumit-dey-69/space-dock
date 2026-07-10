@@ -120,11 +120,11 @@ export function RepoList() {
                   {repo.fork && <Badge variant="outline">Fork</Badge>}
                 </div>
 
-                {repo.description && (
+                {/* {repo.description && (
                   <p className="truncate text-sm text-muted-foreground">
                     {repo.description}
                   </p>
-                )}
+                )} */}
 
                 <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
                   {repo.language && <span>{repo.language}</span>}

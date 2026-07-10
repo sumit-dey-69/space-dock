@@ -9,6 +9,11 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  ResizableHandle,
+  ResizablePanel,
+  ResizablePanelGroup,
+} from "@/components/ui/resizable";
 
 export default async function Home() {
   const session = await getServerSession(authOptions);
@@ -27,31 +32,43 @@ export default async function Home() {
               Sign in with GitHub to view and manage your repositories and
               Codespaces from one dashboard.
             </p>
+            <p className="text-sm text-muted-foreground">
+              This is not the final version.
+            </p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-2">
+          <ResizablePanelGroup
+            orientation="horizontal"
+            className="items-start gap-0"
+          >
             {/* max-h caps each panel relative to the viewport (header
                 height + this page's own padding) so it never forces the
                 whole page to scroll — a panel shrinks to fit short content,
                 and only scrolls internally once it hits that cap. */}
-            <Card className="flex max-h-[calc(100dvh-8rem)] min-h-0 flex-col">
-              <CardHeader className="shrink-0">
-                <CardTitle>Your Repositories</CardTitle>
-              </CardHeader>
-              <CardContent className="min-h-0 flex-1 overflow-y-auto">
-                <RepoList />
-              </CardContent>
-            </Card>
+            <ResizablePanel defaultSize={50} minSize={25}>
+              <Card className="flex max-h-[calc(100dvh-8rem)] min-h-0 flex-col">
+                <CardHeader className="shrink-0">
+                  <CardTitle>Your Repositories</CardTitle>
+                </CardHeader>
+                <CardContent className="min-h-0 flex-1 overflow-y-auto">
+                  <RepoList />
+                </CardContent>
+              </Card>
+            </ResizablePanel>
 
-            <Card className="flex max-h-[calc(100dvh-8rem)] min-h-0 flex-col">
-              <CardHeader className="shrink-0">
-                <CardTitle>Your Codespaces</CardTitle>
-              </CardHeader>
-              <CardContent className="min-h-0 flex-1 overflow-y-auto">
-                <CodespaceTable />
-              </CardContent>
-            </Card>
-          </div>
+            <ResizableHandle />
+
+            <ResizablePanel defaultSize={50} minSize={25}>
+              <Card className="flex max-h-[calc(100dvh-8rem)] min-h-0 flex-col">
+                <CardHeader className="shrink-0">
+                  <CardTitle>Your Codespaces</CardTitle>
+                </CardHeader>
+                <CardContent className="min-h-0 flex-1 overflow-y-auto">
+                  <CodespaceTable />
+                </CardContent>
+              </Card>
+            </ResizablePanel>
+          </ResizablePanelGroup>
         )}
       </main>
     </div>
