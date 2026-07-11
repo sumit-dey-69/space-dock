@@ -3,11 +3,12 @@
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
-import { Lock, Globe, GitFork, Star, Trash2, ExternalLink } from "lucide-react";
+import { GitFork, Star, Trash2, ExternalLink } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { DeleteRepoDialog } from "@/components/repos/delete-repo-dialog";
+import { cn } from "@/lib/utils";
 import type { Repo } from "@/lib/github";
 
 async function fetchRepos(): Promise<Repo[]> {
@@ -109,25 +110,39 @@ export function RepoList() {
                   >
                     {repo.full_name}
                   </a>
-                  <Badge variant={repo.private ? "secondary" : "outline"}>
-                    {repo.private ? (
-                      <Lock className="size-3" />
-                    ) : (
-                      <Globe className="size-3" />
+                  <span
+                    className={cn(
+                      "inline-flex items-center gap-1.5 rounded-full bg-muted px-2 py-0.5 font-mono text-xs",
+                      repo.private
+                        ? "text-muted-foreground"
+                        : "text-emerald-700 dark:text-emerald-400"
                     )}
+                  >
+                    <span
+                      className={cn(
+                        "size-1.5 shrink-0 rounded-full",
+                        repo.private ? "bg-muted-foreground/40" : "bg-emerald-500"
+                      )}
+                    />
                     {repo.private ? "Private" : "Public"}
-                  </Badge>
-                  {repo.fork && <Badge variant="outline">Fork</Badge>}
+                  </span>
+                  {repo.fork && (
+                    <Badge variant="outline" className="font-mono">
+                      Fork
+                    </Badge>
+                  )}
                 </div>
 
-                {/* {repo.description && (
+                {repo.description && (
                   <p className="truncate text-sm text-muted-foreground">
                     {repo.description}
                   </p>
-                )} */}
+                )}
 
                 <div className="flex flex-wrap items-center gap-3 text-xs text-muted-foreground">
-                  {repo.language && <span>{repo.language}</span>}
+                  {repo.language && (
+                    <span className="font-mono">{repo.language}</span>
+                  )}
                   <span className="flex items-center gap-1">
                     <Star className="size-3" /> {repo.stargazers_count}
                   </span>

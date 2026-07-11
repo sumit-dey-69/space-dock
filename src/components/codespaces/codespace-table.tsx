@@ -150,10 +150,10 @@ export function CodespaceTable() {
               <TableCell className="text-muted-foreground">
                 {cs.repository.full_name}
               </TableCell>
-              <TableCell className="text-muted-foreground">
+              <TableCell className="font-mono text-xs text-muted-foreground">
                 {cs.git_status.ref}
               </TableCell>
-              <TableCell className="text-muted-foreground">
+              <TableCell className="font-mono text-xs text-muted-foreground">
                 {cs.machine?.display_name ?? "—"}
               </TableCell>
               <TableCell>
