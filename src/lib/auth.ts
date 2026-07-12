@@ -41,10 +41,17 @@ export const authOptions: NextAuthOptions = {
     strategy: "jwt",
   },
   callbacks: {
-    async jwt({ token, account }) {
-      // `account` is only present on initial sign-in, not on every request.
+    async jwt({ token, account, profile }) {
+      // `account` and `profile` are only present on initial sign-in, not
+      // on every request.
       if (account?.access_token) {
         token.accessToken = account.access_token;
+      }
+      if (profile && "id" in profile) {
+        // GitHub's numeric user id — stable even if the user renames
+        // their account, unlike `login`. Used to key our own
+        // per-user data (pinned repos) in the database.
+        token.githubId = String((profile as { id: number }).id);
       }
       return token;
     },
@@ -52,6 +59,9 @@ export const authOptions: NextAuthOptions = {
       // Expose the GitHub access token to server-side code via the session,
       // so API routes can call the GitHub REST API on the user's behalf.
       session.accessToken = token.accessToken;
+      if (session.user) {
+        session.user.id = token.githubId;
+      }
       return session;
     },
   },

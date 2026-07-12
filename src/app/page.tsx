@@ -19,7 +19,7 @@ export default async function Home() {
   const session = await getServerSession(authOptions);
 
   return (
-    <div className="flex min-h-dvh flex-col bg-zinc-50 dark:bg-black">
+    <div className="flex min-h-dvh flex-col bg-background">
       <SiteHeader />
 
       <main className="mx-auto w-full max-w-7xl px-6 py-8">
@@ -31,9 +31,6 @@ export default async function Home() {
             <p className="max-w-md text-muted-foreground">
               Sign in with GitHub to view and manage your repositories and
               Codespaces from one dashboard.
-            </p>
-            <p className="text-sm text-muted-foreground">
-              This is not the final version.
             </p>
           </div>
         ) : (

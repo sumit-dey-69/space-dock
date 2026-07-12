@@ -2,10 +2,11 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { GitHubApiError } from "@/lib/github";
 
-/** Resolves the current session's GitHub access token, or returns a 401
+/** Resolves the current session's GitHub access token (and user id, for
+ * routes that need to read/write our own per-user data), or returns a 401
  * Response ready to hand straight back to the caller. */
 export async function requireAccessToken(): Promise<
-  { accessToken: string } | { error: Response }
+  { accessToken: string; userId?: string } | { error: Response }
 > {
   const session = await getServerSession(authOptions);
 
@@ -15,7 +16,7 @@ export async function requireAccessToken(): Promise<
     };
   }
 
-  return { accessToken: session.accessToken };
+  return { accessToken: session.accessToken, userId: session.user?.id };
 }
 
 /** Converts a GitHubApiError (or anything else) into a Response, preserving

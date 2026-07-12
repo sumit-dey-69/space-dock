@@ -11,3 +11,19 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+
+/// A repo a user has pinned to the top of their SpaceDock dashboard.
+/// Deliberately our own concept, not GitHub's native profile-pinning
+/// (which is capped at 6 items and requires the GraphQL API + an extra
+/// scope) — this can pin any number of repos, scoped per SpaceDock user.
+model PinnedRepo {
+  id        String   @id @default(cuid())
+  /// GitHub's numeric user id (stable across username changes).
+  userId    String
+  /// GitHub's numeric repo id (stable across renames/transfers).
+  repoId    Int
+  createdAt DateTime @default(now())
+
+  @@unique([userId, repoId])
+  @@index([userId])
+}

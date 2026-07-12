@@ -194,3 +194,52 @@ export async function deleteRepo(
     method: "DELETE",
   });
 }
+
+export interface CreateRepoInput {
+  name: string;
+  description?: string;
+  private: boolean;
+  /** Initialize with a README so the repo isn't completely empty (and is
+   * immediately cloneable) right after creation. */
+  autoInit: boolean;
+}
+
+/** Creates a new repository owned by the authenticated user. */
+export async function createRepo(
+  accessToken: string,
+  input: CreateRepoInput
+): Promise<Repo> {
+  return githubFetch<Repo>(accessToken, "/user/repos", {
+    method: "POST",
+    body: JSON.stringify({
+      name: input.name,
+      description: input.description || undefined,
+      private: input.private,
+      auto_init: input.autoInit,
+    }),
+  });
+}
+
+export interface UpdateRepoInput {
+  name?: string;
+  description?: string;
+  private?: boolean;
+}
+
+/** Updates repo settings — rename, description, and/or visibility.
+ * Renaming changes `full_name`, so callers should treat the response as
+ * the new source of truth rather than assuming the old owner/repo path
+ * still resolves. */
+export async function updateRepo(
+  accessToken: string,
+  owner: string,
+  repo: string,
+  input: UpdateRepoInput
+): Promise<Repo> {
+  return githubFetch<Repo>(accessToken, `/repos/${owner}/${repo}`, {
+    method: "PATCH",
+    body: JSON.stringify(input),
+  });
+}
+
+
